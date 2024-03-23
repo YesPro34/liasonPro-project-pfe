@@ -7,26 +7,33 @@ const User = require('../models/userModel')
 
 
 // register new user
-// POST /api/users
+// POST /api/v1/users
 const registerUser = asyncHandler(async(req, res) => {
         // grab the data from the request body
         console.log(req.body)
         const {
-            name,
+            lastName,
+            firstName,
             email,
             password,
+            confirmPassword,
+            gender,
             role
         } = req.body;
 
         // check fields 
-        if(!name || !email || !password || !role){
-            res.status(400).json({error:"Please add all fields"})
+        if(!lastName || !gender || !firstName || !email || !password || !confirmPassword ||!role ){
+            return res.status(400).json({error:"Please add all fields"})
+        }
+
+        if(password !== confirmPassword){
+          return res.status(400).json({error: "Passwords do not match"})
         }
         
         // check if the user is already sign in 
         const userExist = await  User.findOne({ email })
         if(userExist){
-            res.status(400).json({error : "user already exists!"})
+            return res.status(400).json({error : "user already exists!"})
         }
 
         // Hash password
@@ -35,9 +42,11 @@ const registerUser = asyncHandler(async(req, res) => {
  
         // create new User
         const newUser = await User.create({
-            name,
+            lastName,
+            firstName,
             email,
-            password:hashedPassword,
+            password: hashedPassword,
+            gender,
             role
         })
 
@@ -56,13 +65,10 @@ const registerUser = asyncHandler(async(req, res) => {
 
 
 // login a user
-// POST /api/users/login
+// POST /api/v1/users/login
 const loginUser = asyncHandler(async(req,res)  => {
-       
         const { email, password } = req.body;
-
         const existingUser =  await User.findOne({ email });
-
         if(existingUser && (await bcrypt.compare(password,existingUser.password))){
                 res.status(200).json({
                     data:{
@@ -81,11 +87,21 @@ const loginUser = asyncHandler(async(req,res)  => {
                 res.status(400).json({error : "Invalid credentials"})
             }
     });
-// const getUser = asyncHandler(async(req,res) => {
-//     const {email, password} = req.body
 
-// })
 
+
+// get all users 
+// get api/v1/users
+const getAll = asyncHandler(async (req,res) => {
+  try{
+    const users = await User.find()
+    res.status(200).json({data : users})
+  }catch(error){
+    console.log(error)
+    res.status(400).json({error : "Unexpected error occurred"})
+  }
+})
+    
 
 // jwt configuration
 const jwtConfig = {
@@ -103,5 +119,6 @@ const generateToken = (id) => {
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getAll
 }

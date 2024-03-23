@@ -32,6 +32,13 @@ services:
       - /app/node_modules
     stdin_open: true
     tty: true
+    networks:
+      - backend-net
+
+networks:
+  backend-net:
+    external: true
+    
 volumes:
   # Define volume for MongoDB data (optional)
   mongo-data:

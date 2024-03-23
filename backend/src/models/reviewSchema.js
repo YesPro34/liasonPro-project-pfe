@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose";
 
 // Review schema (assuming reviews are for service providers)
 const reviewSchema = new mongoose.Schema({

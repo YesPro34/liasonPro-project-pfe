@@ -1,17 +1,15 @@
-import { useReducer,useContext } from 'react'
+import { useReducer} from 'react'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ButtonComponent from './ButtonComponent';
 import axios from 'axios'
-import SignInContext from "../contexts/SignInContext"
-// import AuthFormContext from '../contexts/AuthFormContext';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import {toast} from "react-hot-toast"
 
+axios.defaults.withCredentials = true
 function SignInForm({onClose,role, FormTitle}) {
 
 
   // const { isErrorExist, error, isSuccessExist, success, setIsErrorExist, setError, setIsisSuccessExist, setSuccess } = useContext(SignInContext);
-  const { signInFormState, setSignInFormState } = useContext(SignInContext);
+  // const { signInFormState, setSignInFormState } = useContext(SignInContext);
     const initState = {
       email : "",
       firstName: "",
@@ -25,7 +23,7 @@ function SignInForm({onClose,role, FormTitle}) {
     const reducer = (state , action) => {
       switch(action.type){
         case  "input" :
-          return  {...state, [action.field] : action.value}
+          return  {...state, [action.field] : action.payload}
         default:
           return state
       }
@@ -40,55 +38,24 @@ function SignInForm({onClose,role, FormTitle}) {
         dispatch({
           type:"input",
           field: e.target.name,
-          value: e.target.value
+          payload: e.target.value
         })
     }
-        // setIsErrorExist(false)
-        // setIsisSuccessExist(false)
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if(!state.email || !state.firstName || !state.lastName || !state.password || !state.confirmPassword || !state.gender){
-          setSignInFormState(prevState => ({
-            ...prevState,
-            isErrorExist: true,
-            error: "Please fill out all fields",
-        }))
-          return
-        }
-        if(state.password !== state.confirmPassword){
-          setSignInFormState(prevState => ({
-            ...prevState,
-            isErrorExist: true,
-            error: "Password do not match",
-        }))
 
-          return
-        }
-        try{
-            const response = await axios.post("http://localhost:5000/api/v1/users/", state, {
-              headers: { 'Content-Type': 'application/json' } 
-            });
-            if(response.status === 201){
-              console.log(response.status)
-              setSignInFormState(prevState => ({
-                ...prevState,
-                isSuccessExist: true,
-                isErrorExist:false,
-                success: "register successful",
-            }))
-            }else{
-              console.log("Unexpected response from server:", response)
-            }
-            
-        }catch(error){
-          setSignInFormState(prevState => ({
-            ...prevState,
-            isErrorExist: true,
-            error: "Invalid fields",
-        }))
-          console.log("Error submitting form", error.message)
-        }
-      
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          const response = await axios.post("http://localhost:5000/api/v1/users/", state);
+          if (response.status === 201) {
+              toast.success("Registered successfully");
+          }
+      } catch(error) {
+          if (error.response ) {
+              toast.error(error.response.data.error);
+          } else {
+              console.error("Error submitting form", error.message);
+          }
+      }
     }
 
 
@@ -105,8 +72,6 @@ function SignInForm({onClose,role, FormTitle}) {
                 Veuillez saisir vos coordonnées .
               </span>
               <form action="" onSubmit={handleSubmit}>
-              {signInFormState.isErrorExist && <ErrorMessage error={signInFormState.error} />}
-              {signInFormState.isSuccessExist && <SuccessMessage success={signInFormState.success} />} 
               <div className="py-4">
                 <input
                   onChange={handleChange}

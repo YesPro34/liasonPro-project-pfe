@@ -11,7 +11,10 @@ import { useState } from "react"
 import SignInForm from "../components/SignInForm"
 import LoginContext from "../contexts/LoginContext"
 import SignInContext from "../contexts/SignInContext"
+import axios from "axios"
 // import AuthFormContext from "../contexts/AuthFormContext";
+import {Toaster} from "react-hot-toast"
+
 
 
 export default function Home() {
@@ -19,46 +22,19 @@ export default function Home() {
   const [isSignInFormVisible, setIsSignInFormVisible] = useState(false)
   const [userRole, setUserRole] = useState("") 
 
-  //error and success
-  // const [isErrorExist, setIsErrorExist] = useState(false);
-  // const [error, setError] = useState("");
-  // const [isSuccessExist, setIsisSuccessExist] = useState(false);
-  // const [success, setSuccess] = useState("");
+  // const [loginFormState, setloginFormState] = useState({
+  //   isErrorExist: false,
+  //   error: "",
+  //   isSuccessExist: false,
+  //   success: ""
+  // });
 
-  // const LoginerrorAndsuccessValues = {
-  //   isErrorExist,
-  //   error,
-  //   isSuccessExist,
-  //   success,
-  //   setIsErrorExist,
-  //   setError,
-  //   setIsisSuccessExist,
-  //   setSuccess,
-  // }
-  // const SignInerrorAndsuccessValues = {
-  //   isErrorExist,
-  //   error,
-  //   isSuccessExist,
-  //   success,
-  //   setIsErrorExist,
-  //   setError,
-  //   setIsisSuccessExist,
-  //   setSuccess,
-  // }
-
-  const [loginFormState, setloginFormState] = useState({
-    isErrorExist: false,
-    error: "",
-    isSuccessExist: false,
-    success: ""
-  });
-
-  const [signInFormState, setSignInFormState] = useState({
-    isErrorExist: false,
-    error: "",
-    isSuccessExist: false,
-    success: ""
-  });
+  // const [signInFormState, setSignInFormState] = useState({
+  //   isErrorExist: false,
+  //   error: "",
+  //   isSuccessExist: false,
+  //   success: ""
+  // });
   
 
 
@@ -78,8 +54,9 @@ export default function Home() {
 
 
   return (
-    <div >
+    <div className="h-screen" >
         <NavBar toggleLoginForm={toggleLoginForm} toggleSignInForm = {toggleSignInForm}   />
+        <Toaster position="top-right" toastCaptions={{duration:5000}}/>
         <section className="flex mt-[80px] items-center justify-center bg-[#1e2e3e] p-8">
           <div className="mt-[150px]  flex flex-col items-center  justify-center lg:flex-row lg:justify-between ">
             <div> 
@@ -110,12 +87,12 @@ export default function Home() {
         <SignInContext.Provider value={SignInerrorAndsuccessValues}>
              {isSignInFormVisible && userRole === "lawyer" && <SignInForm FormTitle="Donner des services" role="lawyer"  onClose={closeLoginForm} /> } 
         </SignInContext.Provider> */}
-      <LoginContext.Provider value={{loginFormState, setloginFormState}}>
+      {/* <LoginContext.Provider value={{loginFormState, setloginFormState}}> */}
         {isLoginFormVisible && <LoginForm onClose={closeLoginForm} />}
-      </LoginContext.Provider>
-      <SignInContext.Provider value={{signInFormState, setSignInFormState}}>
+      {/* </LoginContext.Provider> */}
+      {/* <SignInContext.Provider value={{signInFormState, setSignInFormState}}> */}
         {isSignInFormVisible && userRole === "lawyer" && <SignInForm FormTitle="Donner des services" role="lawyer" onClose={closeLoginForm} />}
-      </SignInContext.Provider>
+      {/* </SignInContext.Provider> */}
 
 
         <Footer />

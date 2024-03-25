@@ -1,16 +1,12 @@
-import  {useReducer,useContext, useState} from 'react'
+import  {useReducer} from 'react'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import ButtonComponent from './ButtonComponent';
 import axios from "axios"
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
-import LoginContext from "../contexts/LoginContext"
-// import AuthFormContext from "../contexts/AuthFormContext";
+import {toast} from "react-hot-toast"
 
-function LoginCard({onClose}) {
+function LoginForm({onClose}) {
 
-  // const { isErrorExist, error, isSuccessExist, success, setIsErrorExist, setError, setIsisSuccessExist, setSuccess } = useContext(LoginContext);
-  const { loginFormState, setloginFormState } = useContext(LoginContext);
+
   const initState = {
       email:"",
       password : ""
@@ -18,7 +14,7 @@ function LoginCard({onClose}) {
   }
       const reducer = (state,action)=>{
           switch(action.type){
-            case "input": return {...state, [action.field] : action.value}
+            case "input": return {...state, [action.field] : action.payload}
             default : return state
           }
       }
@@ -29,44 +25,23 @@ function LoginCard({onClose}) {
           dispatch ({
             type:"input",
             field : e.target.name,
-            value : e.target.value
+            payload : e.target.value
           })
       } 
     
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if(!state.email || !state.password){
-          setloginFormState(prevState => ({
-            ...prevState,
-            isErrorExist: true,
-            error: "Please fill out all fields",
-        }));
-          return
-        }
         try{
-          // setIsErrorExist(false)
-          const response = await axios.post("http://localhost:5000/api/v1/users/login", state , {
-            headers: { 'Content-Type': 'application/json' } 
-          })
+          const response = await axios.post("http://localhost:5000/api/v1/users/login", state)
           if(response.status === 200){
-            setloginFormState(prevState => ({
-              ...prevState,
-              isSuccessExist: true,
-              isErrorExist: false,
-              success : "Login Successful"
-            }))
-            console.log("login success")
-          }else{
-            console.log("Unexpected response from server:", response.data)
+            toast.success("Login Sucessfull, welcome")
           }
         }catch(error){
-          setloginFormState(prevState => ({
-            ...prevState,
-            isSuccessExist:false,
-            isIsErrorExist: true,
-            error: "Incorrect email or password "
-          }))
-          console.log("error occured", error.message)
+          if (error.response) {
+            toast.error(error.response.data.error);
+        } else {
+            console.error("Error submitting form", error.message);
+        }
         }
     }
 
@@ -83,8 +58,6 @@ function LoginCard({onClose}) {
               Veuillez saisir vos coordonnées .
             </span>
             <form action="" onSubmit={handleSubmit}>
-            {loginFormState.isErrorExist && <ErrorMessage error={loginFormState.error} />}
-            {loginFormState.isSuccessExist && <SuccessMessage success={loginFormState.success} />} 
             <div className="py-4">
               <input
                 value={state.email}
@@ -104,7 +77,7 @@ function LoginCard({onClose}) {
               value={state.password}
               onChange={handleChange}
               placeholder='Mot de passe'
-                type="text"
+                type="password"
                 id="password"
                 name="password"
                 className="w-full p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500"
@@ -135,4 +108,4 @@ function LoginCard({onClose}) {
     );
   }
   
-  export default LoginCard;
+  export default LoginForm;

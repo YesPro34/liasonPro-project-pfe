@@ -1,35 +1,19 @@
 import Home from './pages/Home'
-import Profile from "./pages/Profile"
-import NotFoundPage from  './pages/NotFoundPage'
-import Profiles from './pages/Profiles'
 import "./index.css"
-// import {BrowserRouter as Router, Route} from "react-router-dom"
-import {createBrowserRouter , RouterProvider} from 'react-router-dom'
-import Results from './pages/Results'
-
-
-
-const router = createBrowserRouter([
-  {
-    path:"/",
-    element: <Home />,
-    // errorElement : <NotFoundPage  />
-  },
-  {
-    path:"/results",
-    element: <Results />,
-  }
-
-])
+import { BrowserRouter,Route,Routes } from 'react-router-dom'
+import LogiIn from './pages/LogiIn'
 
 
 
 
 function App() {
   return (
-      <div>
-          <RouterProvider router={router} />
-      </div>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LogiIn />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

@@ -18,7 +18,18 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
   });
 
+const getAllServiceProviders = asyncHandler(async(req,res) => {
+  try{
+    const serviceProviders = await User.find({role:"lawyer"})
+    res.status(200).json({data: serviceProviders})
+  }catch(error){
+    // console.log("error occured", error.message)
+    res.status(400).json("error occured", error.message)
+  }
+})
+
 
   module.exports ={ 
-    deleteUser
+    deleteUser,
+    getAllServiceProviders
   }

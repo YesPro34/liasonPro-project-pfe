@@ -46,7 +46,7 @@ function SignInForm({onClose,role, FormTitle}) {
       e.preventDefault();
       try {
           const response = await axios.post("http://localhost:5000/api/v1/users/", state);
-          if (response.status === 201) {
+          if (response.status === 200) {
               toast.success("Registered successfully");
           }
       } catch(error) {

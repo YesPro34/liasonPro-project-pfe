@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async(req, res) => {
                 role
             })
             if(newUser){
-                    res.status(201).cookie("token", generateToken(newUser._id)).json(newUser)
+                    res.status(200).cookie("token", generateToken(newUser._id,newUser.firstName, newUser.lastName, newUser.email )).json(newUser)
             } 
         }catch(error){
             return res.status(500).json({error : "somthing went wrong"})
@@ -68,18 +68,7 @@ const loginUser = asyncHandler(async(req,res)  => {
         const existingUser =  await User.findOne({ email });
 
         if(existingUser && (await bcrypt.compare(password,existingUser.password))){
-                res.status(200).json({
-                    data:{
-                        accessToken:generateToken(existingUser._id),
-                        user:{
-                            _id:existingUser.id,
-                            name:existingUser.name,
-                            email:existingUser.email,
-                            role:existingUser.role
-
-                        }
-                    }
-                })
+           res.status(200).cookie("token", generateToken(existingUser._id,existingUser.firstName, existingUser.lastName, existingUser.email )).json(existingUser)
               }
             else{
                 return res.status(400).json({error : "Invalid email or password"})
@@ -117,30 +106,28 @@ const getAll = asyncHandler(async (req,res) => {
 
 // delete all users
 // deleteAll api/v1/users/
-const deleteAll = async(req,res) => {
+const deleteAll = asyncHandler(async(req,res) => {
   try{
     const response = await User.deleteMany({})
     return res.status(200).json("users deleted succefully")
   }catch(error){
      res.status(500).json("error occured", error.message)
   }
-}
+})
 
 // getAuser
+// get api/v1/getProfile
 const getProfile = asyncHandler (async(req,res) => {
-  const {token} = req.cookies.token
-  try{
+   const {token} = req.cookies
       if(token){
         jwt.verify(token, jwtConfig.secret, {}, (error, user) => {
           if(error) throw error
-          res.json(user)
+          res.status(200).json(user)
         })
       }else{
         res.json(null)
       }
-  }catch(error){
-    console.log("error" , error.message)
-  }
+
 })
 
 // jwt configuration
@@ -152,8 +139,8 @@ const jwtConfig = {
 
 
 // Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id: id }, jwtConfig.secret , { expiresIn: jwtConfig.expirationTime });
+const generateToken = (id, firstName, lastName, email) => {
+    return jwt.sign({ id: id, firstName:firstName, lastName:lastName, email:email}, jwtConfig.secret , { expiresIn: jwtConfig.expirationTime });
   }
   
 
@@ -161,7 +148,7 @@ module.exports = {
     registerUser,
     loginUser,
     logoutUser,
-    getAll,
     deleteAll,
+    getAll,
     getProfile
 }

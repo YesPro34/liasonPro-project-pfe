@@ -1,4 +1,3 @@
-// import React from "react"
 import NavBar from "../components/NavBar"
 import lawyerImg from "../assets/lawyerImg.png"
 import SearchBar from "../components/SearchBar"
@@ -7,57 +6,41 @@ import Footer from "../components/Footer"
 import ButtonComponent from "../components/ButtonComponent"
 import SearchIcon from '@mui/icons-material/Search'
 import LoginForm from "../components/LoginForm"
-import { useState } from "react"
+import { useState, useContext } from "react"
 import SignInForm from "../components/SignInForm"
-import LoginContext from "../contexts/LoginContext"
-import SignInContext from "../contexts/SignInContext"
-import axios from "axios"
-// import AuthFormContext from "../contexts/AuthFormContext";
 import {Toaster} from "react-hot-toast"
+import { FormVisibilityContext } from "../contexts/FormVisibilityContext"
+
 
 
 
 export default function Home() {
-  const [isLoginFormVisible, setIsLoginFormVisible ] = useState(false)
-  const [isSignInFormVisible, setIsSignInFormVisible] = useState(false)
-  const [userRole, setUserRole] = useState("") 
-
-  // const [loginFormState, setloginFormState] = useState({
-  //   isErrorExist: false,
-  //   error: "",
-  //   isSuccessExist: false,
-  //   success: ""
-  // });
-
-  // const [signInFormState, setSignInFormState] = useState({
-  //   isErrorExist: false,
-  //   error: "",
-  //   isSuccessExist: false,
-  //   success: ""
-  // });
-  
+  // const [isLoginFormVisible, setIsLoginFormVisible ] = useState(false)
+  // const [isSignInFormVisible, setIsSignInFormVisible] = useState(false)
+  const [userRole, setUserRole] = useState("lawyer") 
 
 
-  const toggleLoginForm = () => {
-      setIsLoginFormVisible(!isLoginFormVisible)
-  }
-  const toggleSignInForm = () => {
-      setIsSignInFormVisible(!isSignInFormVisible) 
-      setUserRole("lawyer")
-  }
-
+  // const toggleLoginForm = () => {
+  //     setIsLoginFormVisible(!isLoginFormVisible)
+  // }
+  // const toggleSignInForm = () => {
+  //     setIsSignInFormVisible(!isSignInFormVisible) 
+  //     setUserRole("lawyer")
+  // }
+  const { toggleLoginForm, toggleSignInForm, isLoginFormVisible, isSignInFormVisible } = useContext(FormVisibilityContext); // Access context values
   const closeLoginForm = () => {
-      setIsLoginFormVisible(false);
-      setIsSignInFormVisible(false);
+    toggleLoginForm(false);
+  };
 
-  }
-
+  const closeSignInForm = () => {
+    toggleSignInForm(false);
+  };
 
   return (
-    <div className="h-screen" >
-        <NavBar toggleLoginForm={toggleLoginForm} toggleSignInForm = {toggleSignInForm}   />
-        <Toaster position="top-right" toastCaptions={{duration:5000}}/>
-        <section className="flex mt-[80px] items-center justify-center bg-[#1e2e3e] p-8">
+    <div>
+        <NavBar  />
+        <Toaster position="top-right" toastCaptions={{duration:2000}}/>
+        <section className="flex mt-[80px] h-screen items-center justify-center bg-[#1e2e3e] p-8">
           <div className="mt-[150px]  flex flex-col items-center  justify-center lg:flex-row lg:justify-between ">
             <div> 
                 <h1 className="text-white
@@ -80,22 +63,8 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* <LoginContext.Provider value={LoginerrorAndsuccessValues}>
-             {isLoginFormVisible && <LoginForm onClose={closeLoginForm} /> } 
-        </LoginContext.Provider>
-
-        <SignInContext.Provider value={SignInerrorAndsuccessValues}>
-             {isSignInFormVisible && userRole === "lawyer" && <SignInForm FormTitle="Donner des services" role="lawyer"  onClose={closeLoginForm} /> } 
-        </SignInContext.Provider> */}
-      {/* <LoginContext.Provider value={{loginFormState, setloginFormState}}> */}
         {isLoginFormVisible && <LoginForm onClose={closeLoginForm} />}
-      {/* </LoginContext.Provider> */}
-      {/* <SignInContext.Provider value={{signInFormState, setSignInFormState}}> */}
-        {isSignInFormVisible && userRole === "lawyer" && <SignInForm FormTitle="Donner des services" role="lawyer" onClose={closeLoginForm} />}
-      {/* </SignInContext.Provider> */}
-
-
-        <Footer />
+        {isSignInFormVisible && userRole === "lawyer" && <SignInForm FormTitle="Donner des services" role="lawyer" onClose={closeSignInForm} />}
     </div>
       
   )

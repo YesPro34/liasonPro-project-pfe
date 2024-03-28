@@ -1,23 +1,27 @@
-import { useReducer} from 'react'
+import { useReducer,useContext} from 'react'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import ButtonComponent from './ButtonComponent';
+import ButtonComponent from '../ButtonComponent';
 import axios from 'axios'
 import {toast} from "react-hot-toast"
+import {FormVisibilityContext} from '../../contexts/FormVisibilityContext';
+import { userContext } from '../../contexts/userContext';
+
+
 
 axios.defaults.withCredentials = true
-function SignInForm({onClose,role, FormTitle}) {
+function SignInForm({onClose}) {
 
-
-  // const { isErrorExist, error, isSuccessExist, success, setIsErrorExist, setError, setIsisSuccessExist, setSuccess } = useContext(SignInContext);
-  // const { signInFormState, setSignInFormState } = useContext(SignInContext);
+  const {toggleSignInForm} = useContext(FormVisibilityContext)
+  const {setUser} = useContext(userContext)
+    
     const initState = {
       email : "",
       firstName: "",
-      lastName:"",
-      password:"",
-      confirmPassword:"",
+      lastName: "",
+      password: "",
+      confirmPassword: "",
       gender : "",
-      role:role
+      role:"lawyer"
     }
 
     const reducer = (state , action) => {
@@ -48,6 +52,8 @@ function SignInForm({onClose,role, FormTitle}) {
           const response = await axios.post("http://localhost:5000/api/v1/users/", state);
           if (response.status === 200) {
               toast.success("Registered successfully");
+              toggleSignInForm()
+              setUser(response.data)
           }
       } catch(error) {
           if (error.response ) {
@@ -67,7 +73,7 @@ function SignInForm({onClose,role, FormTitle}) {
                 onClick={onClose}
                 className="absolute top-0 right-0 mt-4 mr-4 cursor-pointer" 
               />
-              <span className="mb-3 text-4xl font-bold">{FormTitle}</span>
+              <span className="mb-3 text-4xl font-bold">Creer un Compte</span>
               <span className="font-light text-gray-400 mb-8">
                 Veuillez saisir vos coordonnées .
               </span>
@@ -77,7 +83,7 @@ function SignInForm({onClose,role, FormTitle}) {
                   onChange={handleChange}
                   value={state.email}
                   placeholder='Email'
-                  type="text"
+                  type="email"
                   id="email"
                   name="email"
                   className="w-full p-2 border border-gray-300 rounded-md placeholder:font-light placeholder:text-gray-500"
@@ -148,6 +154,7 @@ function SignInForm({onClose,role, FormTitle}) {
                     id="rememberMe"
                     name="rememberMe"
                     className="mr-2"
+                    required
                   />
                   <label htmlFor="rememberMe" className="text-md font-bold">
                   J'accepte la politique de confidentialité du site LiaisonPro

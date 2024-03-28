@@ -1,8 +1,9 @@
-import NavBar from "../components/NavBar"
+import NavBar from "../components/layouts/NavBar"
 import img from "../assets/tribunal.jpeg"
 import ServiceProviderCard from "../components/ServiceProviderCard"
 import {useEffect, useState} from 'react'
 import axios from "axios"
+import AuthPageWrraper from "../components/AuthPageWrraper"
 
 
 
@@ -21,17 +22,18 @@ function Results() {
 
     },[])
   return (
-    <div>
-        <NavBar />
-        <section className="mt-[150px] flex h-screen justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:max-w-[95%] max-w-full">
-                {serviceProviders.map(user => (
-                    <ServiceProviderCard key={user.id} user={user} img={img} />
-                ))}
-            </div>
-        </section>
-        
-    </div>
+    <AuthPageWrraper>
+        <div>
+            <NavBar />
+            <section className="mt-[150px] flex justify-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:max-w-[95%] max-w-full">
+                    {serviceProviders.map(user => (
+                        <ServiceProviderCard key={user.id} user={user} img={img} />
+                    ))}
+                </div>
+            </section>
+        </div>
+    </AuthPageWrraper>
   )
 }
 

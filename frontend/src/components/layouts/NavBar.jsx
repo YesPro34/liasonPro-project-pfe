@@ -1,36 +1,35 @@
-
-// import Menu from '@mui/icons-material/Menu';
 import { useContext, useState } from 'react';
-import ButtonComponent from './ButtonComponent'
-import Logo from "./Logo"
+import ButtonComponent from '../ButtonComponent'
+import Logo from "../Logo"
 import MenuIcon from '@mui/icons-material/Menu';
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import {FormVisibilityContext} from '../contexts/FormVisibilityContext';
-import {userContext} from "../contexts/userContext"
+import {FormVisibilityContext} from '../../contexts/FormVisibilityContext';
+import {userContext} from "../../contexts/userContext"
 import axios from "axios"
 import {toast} from "react-hot-toast"
+import { useNavigate } from "react-router-dom"
 
 const NavBar = () => {
   
   const {toggleLoginForm , toggleSignInForm} = useContext(FormVisibilityContext)
 
-  const {user} = useContext(userContext)
+  const {user,setUser} = useContext(userContext)
+
+  const navigate = useNavigate()
   
-  // const handleCloseForms = () => {
-  //   toggleLoginForm(false);
-  //   toggleSignInForm(false);
-  // };
   const [buttonsVisible, setButtonsVisible] = useState(false);
 
   const toggleButtons = () => {
     setButtonsVisible(!buttonsVisible);
-  };
+  }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try{
-      const response = axios.post("http://localhost:5000/api/v1/users/logout")
+      const response = await axios.post("http://localhost:5000/api/v1/users/logout")
+      console.log(response)
       if(response.status === 200){
-        toast.success("Loged out successfully")
+        toast.success("Logged out successfully")
+        setUser(null)
+        navigate("/")
       }
     }catch(error){
       console.log(error)
@@ -47,19 +46,19 @@ const NavBar = () => {
         {!user ?
            (     
             <>  
-           <ButtonComponent  onClick={toggleSignInForm}   className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
+            <ButtonComponent  onClick={toggleSignInForm}   className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
                   Donner des services
-          </ButtonComponent>
-          <ButtonComponent  onClick={toggleLoginForm}  className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
+            </ButtonComponent>
+            <ButtonComponent  onClick={toggleLoginForm}  className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
                   Se connecter
-          </ButtonComponent>
+            </ButtonComponent>
           </>
            ):
            (
             <>
-             <ButtonComponent onClick={handleLogout} className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
+            <ButtonComponent onClick={handleLogout} className="bg-[#cdb091] border rounded-3xl border-[#cdb091] text-white inline-block px-9 py-3 relative hover:bg-[#9c8a6e] mt-6" >
                      Deconnection
-             </ButtonComponent>
+            </ButtonComponent>
              <h1 className='text-white'>{user.firstName}</h1>
              </>
 
@@ -75,6 +74,8 @@ const NavBar = () => {
       </button>
 
     </nav>
+
+
    
   )
 }

@@ -1,16 +1,24 @@
-import  {useReducer} from 'react'
+import  {useReducer,useContext} from 'react'
+import {useNavigate} from "react-router-dom"
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import ButtonComponent from './ButtonComponent';
+import ButtonComponent from '../ButtonComponent';
 import axios from "axios"
-import {toast} from "react-hot-toast"
+import {toast} from "react-hot-toast" 
+import {FormVisibilityContext} from '../../contexts/FormVisibilityContext';
+import { userContext } from '../../contexts/userContext';
+
+
+
+
 
 function LoginForm({onClose}) {
 
+  const {toggleLoginForm} = useContext(FormVisibilityContext)
+  const {setUser} = useContext(userContext)
 
   const initState = {
       email:"",
       password : ""
-
   }
       const reducer = (state,action)=>{
           switch(action.type){
@@ -35,6 +43,8 @@ function LoginForm({onClose}) {
           const response = await axios.post("http://localhost:5000/api/v1/users/login", state)
           if(response.status === 200){
             toast.success("Login Sucessfull, welcome")
+            toggleLoginForm() 
+            setUser(response.data)
           }
         }catch(error){
           if (error.response) {

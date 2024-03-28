@@ -5,7 +5,6 @@ import { createContext, useEffect, useState } from "react"
 export const userContext = createContext({})
 
 
-
 export function UserContextProvider({children}){
     const [user, setUser] = useState(null)
 
@@ -15,7 +14,7 @@ export function UserContextProvider({children}){
                 setUser(data)
             })
         }
-    },[])
+    },[user])
     return(
         <userContext.Provider value={{user,setUser}}>
             {children}
